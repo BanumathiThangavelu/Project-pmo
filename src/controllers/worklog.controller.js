@@ -5,40 +5,47 @@ const workLog = require("../models/worklog.model");
 //@route GET {{URL}}/api/worklog
 //@access Private
 const getworkLog = asyncHandler(async (req, res) => {
-  const loggedWork = await workLog.find();
+  const loggedWork = await workLog.find({}).sort({ createdAt: -1 });
 
-  res.status(200).json(loggedWork);
+  res.status(200).json({
+    success: true,
+    result: loggedWork,
+    message: "Fetched all the records",
+  });
 });
 
 //@desc set worklog
 //@route POST {{URL}}/api/worklog
 //@access Private
 const setworkLog = asyncHandler(async (req, res) => {
-  if (!req.body.taskID) {
+  const { taskID, logdate, hour_spent, description } = req.body;
+  if (!taskID) {
     res.status(400);
     throw new Error("Please add a task_id");
   }
-  if (!req.body.logdate) {
+  if (!logdate) {
     res.status(400);
     throw new Error("please enter the date");
   }
-  if (!req.body.hour_spent) {
+  if (!hour_spent) {
     res.status(400);
     throw new Error("please enter the hour you spent");
   }
-  if (!req.body.description) {
+  if (!description) {
     res.status(400);
     throw new Error("Please add description");
   }
 
   const loggedWork = await workLog.create({
-    taskID: req.body.taskID,
-    logdate: req.body.logdate,
-    hour_spent: req.body.hour_spent,
-    description: req.body.description,
+    taskID: taskID,
+    logdate: logdate,
+    hour_spent: hour_spent,
+    description: description,
   });
 
-  res.status(200).json(loggedWork);
+  res
+    .status(200)
+    .json({ success: true, result: loggedWork, message: "Successfully added" });
 });
 
 //@desc update worklog
