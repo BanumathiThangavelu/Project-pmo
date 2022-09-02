@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 
 const workLog = require("../models/worklog.model");
+//const tasks = require("../models/task.model");
 //@desc get worklog
 //@route GET {{URL}}/api/worklog
 //@access Private
@@ -19,30 +20,16 @@ const getworkLog = asyncHandler(async (req, res) => {
 //@access Private
 const setworkLog = asyncHandler(async (req, res) => {
   const { taskID, logdate, hour_spent, description } = req.body;
-  if (!taskID) {
+  if (!taskID && !logdate && !hour_spent && !description) {
     res.status(400);
-    throw new Error("Please add a task_id");
+    throw new Error("Please add a all the fields");
   }
-  if (!logdate) {
-    res.status(400);
-    throw new Error("please enter the date");
-  }
-  if (!hour_spent) {
-    res.status(400);
-    throw new Error("please enter the hour you spent");
-  }
-  if (!description) {
-    res.status(400);
-    throw new Error("Please add description");
-  }
-
   const loggedWork = await workLog.create({
     taskID: taskID,
     logdate: logdate,
     hour_spent: hour_spent,
     description: description,
   });
-
   res
     .status(200)
     .json({ success: true, result: loggedWork, message: "Successfully added" });

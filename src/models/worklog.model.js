@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const loggedWorkSchema = new mongoose.Schema(
   {
     taskID: {
-      type: Number,
+      type: mongoose.Schema.Types.ObjectId,
       required: [true, "please add a task_ID"],
     },
     logdate: {
